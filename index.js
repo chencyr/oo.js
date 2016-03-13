@@ -97,12 +97,14 @@ const oojs = {
         return newClass;
     },
 
-    interface: function() {
-
-    },
-
-    instanceOf: function() {
-
+    /**
+     * Check two class type is equal.
+     * @param class1
+     * @param class2
+     * @returns {boolean} Return ture when two class are equal.
+     */
+    typeEqual: function(class1, class2) {
+        throw {message: "Not implement the method."};
     }
 
 };
