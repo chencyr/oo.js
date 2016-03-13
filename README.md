@@ -2,6 +2,7 @@
 For javascript object oriented
 
 # Example
+```
 var oo = require('oo.js');
 var Car = oo.class({
   public: {
@@ -32,5 +33,5 @@ myCar.run();
 console.log(myCar.getGas()); // 9
 myCar.addGas(3);
 console.log(myCar.getGas()); // 12
-
+```
 
