@@ -1,5 +1,5 @@
 # oo.js
-For javascript object oriented
+For nodejs object oriented helper.
 
 # Install
 ```
