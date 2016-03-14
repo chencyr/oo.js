@@ -1,6 +1,11 @@
 # oo.js
 For javascript object oriented
 
+# Install
+```
+npm install -g oo.js
+```
+
 # Example
 ```
 var oo = require('oo.js');
