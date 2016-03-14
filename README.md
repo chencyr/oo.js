@@ -1,5 +1,6 @@
 # oo.js
 For nodejs object oriented helper.
+util.inherits object compatible.
 
 # Install
 ```
