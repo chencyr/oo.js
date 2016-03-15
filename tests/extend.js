@@ -109,5 +109,51 @@ describe('oojs', function() {
 
             assert.equal(true, (c instanceof Class1));
         });
+
+        it('should construct by method _constuct().', function () {
+
+            var Class1 = oo.class({
+                public: {
+                    name: "Class 1",
+                    setName: function(name) {
+                        this.name = name;
+                    }
+                },
+                abstract: [
+                    "getName",
+                ]
+            });
+
+
+            var Class2 = oo.class({ extends: Class1,
+                abstract: [
+                    "getYear"
+                ]
+            });
+
+            var Class3 = oo.class({ extends: Class2,
+                public: {
+                    _construct: function(name) {
+                        this.name = name;
+                    },
+                    getName: function() {
+                        return "Class 3 implement:" + this.name;
+                    },
+                    getYear: function() {
+                        return 10;
+                    }
+                }
+            });
+
+            var c = new Class3('constuct 1');
+            assert.equal("constuct 1", c.name);
+            assert.equal("Class 3 implement:constuct 1", c.getName());
+
+            c.setName("new Name");
+            assert.equal("new Name", c.name);
+            assert.equal("Class 3 implement:new Name", c.getName());
+
+            assert.equal(true, (c instanceof Class1));
+        });
     });
 });

@@ -59,12 +59,19 @@ const oojs = {
      */
     class: function(args) {
 
-        var newClass = function() {
+        var newClass = function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11) {
 
             // check abstract method is implement.
             var abstractCollection = this.__proto__.abstract_;
             for(var i in abstractCollection) {
                 checkAbstractMethod(abstractCollection[i], this);
+            }
+
+            if(typeof (this._construct) == 'function') {
+                this._construct(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+            }
+            else {
+                this._construct = function() {};
             }
         };
 
