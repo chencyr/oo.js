@@ -199,6 +199,7 @@ describe('oojs', function() {
             assert.equal(true, (c instanceof Class1));
         });
 
+
         it('should call parent methods.', function () {
 
             var ParentClass = oo.class({
@@ -251,6 +252,73 @@ describe('oojs', function() {
             assert.equal(8, child2.age);
             assert.equal('yellow', child2.getSkin());
             assert.equal('male', child2.getGender());
+        });
+
+        it('should call multiple extends layer methods.', function () {
+
+            var Layer1 = oo.class({
+                public: {
+                    _construct: function() {
+                        //this.sum = this.sum || 1;
+                    },
+                    getId: function() {
+                        return "layer1";
+                    },
+                    getCount: function() {
+                        return 2;
+                    }
+                }
+            });
+
+
+            var Layer2 = oo.class({
+                extends: Layer1,
+                public: {
+                    _construct: function() {
+                        this._parent("_construct")();
+                        this.sum = this.sum + 3;
+                    },
+                    getId: function() {
+                        return "layer2";
+                    },
+                    getCount: function() {
+                        return 4 + this._parent('getCount')();
+                    }
+                }
+            });
+
+            var Layer3 = oo.class({
+                extends: Layer2,
+                public: {
+                    _construct: function() {
+                        this._parent("_construct")();
+                        this.sum = this.sum + 8;
+                    },
+                    getId: function() {
+                        return "layer3";
+                    },
+                    getCount: function() {
+                        return 8 + this._parent('getCount')();
+                    }
+                }
+            });
+
+
+            var layer2 = new Layer2();
+            var layer3 = new Layer3();
+
+            assert.equal('layer3', layer3.getId());
+            assert.equal('layer2', layer3._parent('getId')());
+            assert.equal('layer1', layer3._parent('_parent')('getId')());
+            assert.equal('layer1', layer3._parent('_parent')('getId')());
+            assert.equal('layer3', layer3.getId());
+            assert.equal('layer2', layer3._parent('getId')());
+            assert.equal(14, layer3.getCount());
+
+            assert.equal('layer2', layer2.getId());
+            assert.equal('layer1', layer2._parent('getId')());
+            assert.equal(6, layer2.getCount());
+
         });
     });
 });

@@ -48,6 +48,29 @@ var inheritsAbstract = function(childClass, parentClass) {
     }
 };
 
+
+var inheritsParentCaller = function(childClass) {
+
+    childClass.prototype._parent = function(methodName) {
+        var self = this;
+        this.scopeDeep_ = this.scopeDeep_ || {};
+        this.scopeDeep_[methodName] = this.scopeDeep_[methodName] || 0;
+
+        return function() {
+            self.scopeDeep_[methodName]++;
+            var parentClass = childClass.super_;
+            for(var i = 1; i < self.scopeDeep_[methodName]; i++) {
+                parentClass = parentClass.super_;
+            }
+
+            var result =  parentClass.prototype[methodName].apply(self, arguments);
+            self.scopeDeep_[methodName]--;
+            return result;
+        }
+    };
+};
+
+
 /**
  * Support a simply way to develop javascript application by Object Oriented Design.
  */
@@ -78,6 +101,7 @@ const oojs = {
         if(typeof (args.extends) == 'function') {
             util.inherits(newClass, args.extends);
             inheritsAbstract(newClass, args.extends);
+            inheritsParentCaller(newClass, args.extends);
         }
         else {
             newClass.prototype.abstract_ = [];
@@ -100,13 +124,6 @@ const oojs = {
                 newClass.prototype[name] = args.public[name];
             }
         }
-
-        newClass.prototype._parent = function(methodName) {
-            var self = this;
-            return function() {
-                return newClass.super_.prototype[methodName].apply(self, arguments);
-            }
-        };
 
         return newClass;
     },
