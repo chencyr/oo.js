@@ -101,6 +101,13 @@ const oojs = {
             }
         }
 
+        newClass.prototype._parent = function(methodName) {
+            var self = this;
+            return function() {
+                return newClass.super_.prototype[methodName].apply(self, arguments);
+            }
+        };
+
         return newClass;
     },
 

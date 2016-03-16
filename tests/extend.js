@@ -155,5 +155,102 @@ describe('oojs', function() {
 
             assert.equal(true, (c instanceof Class1));
         });
+
+        it('should implement parent abstract method.', function () {
+
+            var Class1 = oo.class({
+                public: {
+                    name: "Class 1",
+                    setName: function(name) {
+                        this.name = name;
+                    }
+                },
+                abstract: [
+                    "getName",
+                ]
+            });
+
+
+            var Class2 = oo.class({ extends: Class1,
+                abstract: [
+                    "getYear"
+                ]
+            });
+
+            var Class3 = oo.class({ extends: Class2,
+                public: {
+                    getName: function() {
+                        return "Class 3 implement:" + this.name;
+                    },
+                    getYear: function() {
+                        return 10;
+                    }
+                }
+            });
+
+            var c = new Class3();
+            assert.equal("Class 1", c.name);
+            assert.equal("Class 3 implement:Class 1", c.getName());
+
+            c.setName("new Name");
+            assert.equal("new Name", c.name);
+            assert.equal("Class 3 implement:new Name", c.getName());
+
+            assert.equal(true, (c instanceof Class1));
+        });
+
+        it('should call parent methods.', function () {
+
+            var ParentClass = oo.class({
+                public: {
+                    _construct: function(age) {
+                        this.firstName  = "Chen";
+                        this.lastName   = "Rex";
+                        this.age        = age;
+                        this.skin       = "white";
+                    },
+                    getName: function() {
+                        return this.lastName + " " +this.firstName;
+                    },
+                    getSkin: function() {
+                        return this.skin;
+                    }
+                }
+            });
+
+
+            var ChildClass = oo.class({
+                extends: ParentClass,
+                public: {
+                    _construct: function(age, skin, gender, lastName) {
+                        this._parent("_construct")(age);
+                        this.gender     = gender;
+                        this.skin       = skin;
+                        this.lastName   = lastName;
+                    },
+                    getGender: function() {
+                        return this.gender;
+                    }
+                }
+            });
+
+            var parent = new ParentClass(30);
+            var child1 = new ChildClass(6, 'black', 'female', 'Hannah');
+            var child2 = new ChildClass(8, 'yellow', 'male', 'Paco');
+
+            assert.equal("Rex Chen", parent.getName());
+            assert.equal(30, parent.age);
+            assert.equal('white', parent.getSkin());
+
+            assert.equal("Hannah Chen", child1.getName());
+            assert.equal(6, child1.age);
+            assert.equal('black', child1.getSkin());
+            assert.equal('female', child1.getGender());
+
+            assert.equal("Paco Chen", child2.getName());
+            assert.equal(8, child2.age);
+            assert.equal('yellow', child2.getSkin());
+            assert.equal('male', child2.getGender());
+        });
     });
 });
