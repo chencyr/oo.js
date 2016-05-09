@@ -1,6 +1,6 @@
 {
   "name": "oo.js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/chencyr/oo.js/issues"
   },
-  "homepage": "https://github.com/chencyr/oo.js#readme"
+  "homepage": "https://github.com/chencyr/oo.js#readme",
+  "dependencies": {
+    "extend": "^3.0.0"
+  }
 }

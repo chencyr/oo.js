@@ -1,4 +1,5 @@
 const util = require('util');
+const extend = require('extend');
 
 /**
  * Throw exception when abstract method not implement found.
@@ -28,7 +29,6 @@ var checkAbstractMethod = function(abstractList, publicList) {
                     }
                 }
                 else {
-                    throw {message: "Abstract method '" + abstractMethod + "' not implement error." };
                 }
             }
         }
@@ -120,9 +120,11 @@ const oojs = {
 
         // Setting public methods.
         if(typeof (args.public) == 'object') {
-            for(var name in args.public) {
-                newClass.prototype[name] = args.public[name];
-            }
+
+            extend(newClass.prototype, args.public);
+            //for(var name in args.public) {
+            //    newClass.prototype[name] = args.public[name];
+            //}
         }
 
         return newClass;
