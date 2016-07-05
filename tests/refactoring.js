@@ -3,12 +3,20 @@ var oo      = require('../index');
 
 describe('refactoring', function() {
     describe('#class()', function () {
-        it('should get parent class.', function () {
-            var Class1 = oo.class({});
+        it('should get parent class/extend method/extend attributes.', function () {
+            var Class1 = oo.class({
+                public: {
+                    method1: function() {return 2;},
+                    value1: 1
+                }
+            });
+
             var Class2 = oo.class({extends: Class1});
             var c2 = new Class2();
 
             assert.equal(c2.$parent, Class1);
+            assert.equal(c2.method1(), 2);
+            assert.equal(c2.value1, 1);
         });
 
         it('should get abstract list of class.', function () {
@@ -39,12 +47,22 @@ describe('refactoring', function() {
                 extends: Class1,
                 abstract: [
                     "method3",
-                    "method4"
+                    "method4",
+                    "method5"
                 ]
             });
 
-            var c2 = new Class2();
-            assert.equal(JSON.stringify(c2.$abstract), JSON.stringify(['method1', 'method2', 'method3', 'method4']));
+            var Class3 = oo.class({
+                extends: Class2,
+                abstract: [
+                    "method3",
+                    "method1",
+                    "method6"
+                ]
+            });
+
+            var c3 = new Class3();
+            assert.equal(JSON.stringify(c3.$abstract), JSON.stringify(['method1', 'method2', 'method3', 'method4', 'method5', 'method6']));
         });
     });
 });

@@ -1,53 +1,6 @@
 const util = require('util');
 const extend = require('extend');
 
-/**
- * Throw exception when abstract method not implement found.
- * @param abstractList [method1: string, method2: string...];
- * @param publicList {method1: function..., method2: string...}
- */
-var checkAbstractMethod = function(abstractList, publicList) {
-    if(typeof (abstractList) == 'object') {
-        for(var i in abstractList) {
-            if(typeof abstractList[i] == 'string') {
-
-                var abstractMethod = abstractList[i];
-
-                //check abstract method was implement by child class.
-                if(typeof (publicList) == 'object') {
-                    var isImplement = false;
-                    for(var name in publicList) {
-                        if(typeof publicList[name] == 'function') {
-                            if(name == abstractMethod) {
-                                isImplement = true;
-                            }
-                        }
-                    }
-
-                    if(! isImplement) {
-                        throw {message: "Abstract method '" + abstractMethod + "' not implement error." };
-                    }
-                }
-                else {
-                }
-            }
-        }
-    }
-};
-
-/**
- *
- * @param childClass
- * @param parentClass
- */
-var inheritsAbstract = function(childClass, parentClass) {
-    childClass.prototype.abstract_ = [];
-    for(var i in parentClass.prototype.abstract_) {
-        var abstractList = parentClass.prototype.abstract_[i];
-        childClass.prototype.abstract_.push(abstractList);
-    }
-};
-
 
 var inheritsParentCaller = function(childClass) {
 
@@ -148,16 +101,18 @@ const oojs = {
                 OOJSClassConstructor.prototype.$parent = args.extends;
             }
 
+            // extend abstract list.
             $abstractLength = OOJSClassConstructor.prototype.$parent.prototype.$abstract.length;
             for($index = 0; $index < $abstractLength; $index++) {
                 method = OOJSClassConstructor.prototype.$parent.prototype.$abstract[$index];
                 OOJSClassConstructor.prototype.$abstract.push(method);
             }
 
-            //
-            //for(method in args.extends.prototype) {
-            //    console.log("parent's method:", name);®
-            //}
+            // extend attributes/methods.
+            for($index in OOJSClassConstructor.prototype.$parent.prototype) {
+                method = OOJSClassConstructor.prototype.$parent.prototype[$index];
+                OOJSClassConstructor.prototype[$index] = method;
+            }
         }
         else {
             if(Object.defineProperty) {
@@ -171,7 +126,6 @@ const oojs = {
                 OOJSClassConstructor.prototype.$parent = null;
             }
         }
-
 
         // Setting abstract method list.
         if(args.abstract) {
@@ -198,13 +152,12 @@ const oojs = {
 
 
         // Setting public methods.
-        //if(typeof (args.public) == 'object') {
-        //
-        //    extend(OOJSClassConstrucotr.prototype, args.public);
-        //    //for(var name in args.public) {
-        //    //    newClass.prototype[name] = args.public[name];
-        //    //}
-        //}
+        if(typeof (args.public) == 'object') {
+            for(index in args.public) {
+                method = args.public[index];
+                OOJSClassConstructor.prototype[index] = method;
+            }
+        }
 
         return OOJSClassConstructor;
     },
