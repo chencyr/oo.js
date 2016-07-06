@@ -1,4 +1,5 @@
 const extend = require('extend');
+const util = require('util');
 
 console.log("test feature");
 console.log("Object", Object);
@@ -71,4 +72,20 @@ console.log("myclass2.test()", myclass2.test());
 
 
 console.log("------------------------------------------------");
+
+var MyClass3 = function() {
+    console.log("myclass3 construct!");
+};
+
+for(var name in MyClass2.prototype) {
+    MyClass3.prototype[name] = MyClass2.prototype[name];
+}
+
+
+var myclass3 = new MyClass3();
+console.log("myclass3.test()", myclass3.test());
+console.log(myclass3 instanceof MyClass2);
+
+
+
 

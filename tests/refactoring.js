@@ -29,8 +29,7 @@ describe('refactoring', function() {
                 ]
             });
 
-            var c1 = new Class1();
-            assert.equal(JSON.stringify(c1.$abstract), JSON.stringify(['method1', 'method2', 'method3']));
+            assert.equal(JSON.stringify(Class1.prototype.$abstract), JSON.stringify(['method1', 'method2', 'method3']));
         });
 
         it('should get abstract list of class with parent.', function () {
@@ -61,8 +60,7 @@ describe('refactoring', function() {
                 ]
             });
 
-            var c3 = new Class3();
-            assert.equal(JSON.stringify(c3.$abstract), JSON.stringify(['method1', 'method2', 'method3', 'method4', 'method5', 'method6']));
+            assert.equal(JSON.stringify(Class3.prototype.$abstract), JSON.stringify(['method1', 'method2', 'method3', 'method4', 'method5', 'method6']));
         });
     });
 });

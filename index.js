@@ -1,27 +1,24 @@
-const util = require('util');
-const extend = require('extend');
-
-
-var inheritsParentCaller = function(childClass) {
-
-    childClass.prototype._parent = function(methodName) {
-        var self = this;
-        this.scopeDeep_ = this.scopeDeep_ || {};
-        this.scopeDeep_[methodName] = this.scopeDeep_[methodName] || 0;
-
-        return function() {
-            self.scopeDeep_[methodName]++;
-            var parentClass = childClass.super_;
-            for(var i = 1; i < self.scopeDeep_[methodName]; i++) {
-                parentClass = parentClass.super_;
-            }
-
-            var result =  parentClass.prototype[methodName].apply(self, arguments);
-            self.scopeDeep_[methodName]--;
-            return result;
-        }
-    };
-};
+//
+//var inheritsParentCaller = function(childClass) {
+//
+//    childClass.prototype._parent = function(methodName) {
+//        var self = this;
+//        this.scopeDeep_ = this.scopeDeep_ || {};
+//        this.scopeDeep_[methodName] = this.scopeDeep_[methodName] || 0;
+//
+//        return function() {
+//            self.scopeDeep_[methodName]++;
+//            var parentClass = childClass.super_;
+//            for(var i = 1; i < self.scopeDeep_[methodName]; i++) {
+//                parentClass = parentClass.super_;
+//            }
+//
+//            var result =  parentClass.prototype[methodName].apply(self, arguments);
+//            self.scopeDeep_[methodName]--;
+//            return result;
+//        }
+//    };
+//};
 
 
 /**
@@ -35,7 +32,6 @@ const oojs = {
      */
     class: function(args) {
 
-
         var OOJSClassConstructor,
             index,
             $index,
@@ -47,21 +43,43 @@ const oojs = {
 
         // Create new class constructor.
         OOJSClassConstructor = function() {
+            var $index,
+                $method,
+                method,
+                isAbstractImplemented;
+
             // check abstract method is implement.
-            //var abstractCollection = this.__proto__.abstract_;
-            //for(var i in abstractCollection) {
-            //    checkAbstractMethod(abstractCollection[i], this);
-            //}
-            //
-            //if(typeof (this._construct) == 'function') {
-            //    this._construct(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
-            //}
-            //else {
-            //    this._construct = function() {};
-            //}
+            for($index in this.$abstract) {
+                $method = this.$abstract[$index];
+                isAbstractImplemented = false;
+                for(method in this) {
+                    isAbstractImplemented = isAbstractImplemented ||
+                        (method == $method);
+                }
+                if(!isAbstractImplemented) {
+                    throw "Abstract method [" + $method + "] not implement error.";
+                }
+            }
+
+            if(typeof (this._construct) == 'function') {
+                this._construct.apply(this, arguments);
+            }
+            else {
+                this._construct = function() {};
+            }
         };
 
         args = args || {};
+
+        if(typeof (args.extends) == 'function') {
+            try {
+                var util = require('util');
+                util.inherits(OOJSClassConstructor, args.extends);
+            }
+            catch(e) {
+
+            }
+        }
 
         // Initial private properties.
         if(Object.defineProperty) {
@@ -90,6 +108,7 @@ const oojs = {
 
         // Inherit parent's properties.
         if(typeof (args.extends) == 'function') {
+
             if(Object.defineProperty) {
                 Object.defineProperty(OOJSClassConstructor.prototype, '$parent', {
                     enumerable : false,
@@ -150,7 +169,6 @@ const oojs = {
             }
         }
 
-
         // Setting public methods.
         if(typeof (args.public) == 'object') {
             for(index in args.public) {
@@ -159,17 +177,32 @@ const oojs = {
             }
         }
 
+
+
         return OOJSClassConstructor;
     },
 
     /**
-     * Check two class type is equal.
-     * @param class1
-     * @param class2
-     * @returns {boolean} Return ture when two class are equal.
+     * Check instance of class.
+     * @param object
+     * @param classConstructor
+     * @returns {boolean} Return true when equal.
      */
-    typeEqual: function(class1, class2) {
-        throw {message: "Not implement the method."};
+    instanceOf: function(object, classConstructor) {
+        var isEqual = false,
+            parentConstructor = object.$parent;
+
+        while(parentConstructor != null && parentConstructor != undefined) {
+            isEqual = isEqual || (parentConstructor == classConstructor);
+            try {
+                isEqual = isEqual || (parentConstructor instanceof classConstructor);
+            }
+            catch(e) {}
+
+            parentConstructor = parentConstructor.prototype.$parent;
+        }
+
+        return isEqual;
     }
 
 };
