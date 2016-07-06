@@ -20,7 +20,6 @@
 //    };
 //};
 
-
 /**
  * Support a simply way to develop javascript application by Object Oriented Design.
  */
@@ -36,6 +35,9 @@ const oojs = {
             index,
             $index,
             method,
+            Parent,
+            Invoker,
+            invoker,
             $isAbstractExists,
             abstractLength,
             $abstractLength,
@@ -59,6 +61,17 @@ const oojs = {
                 if(!isAbstractImplemented) {
                     throw "Abstract method [" + $method + "] not implement error.";
                 }
+            }
+
+            Parent = this.$parent;
+            invoker = this;
+            var count = 0;
+            while(Parent) {
+                count++;
+                Invoker = Parent.prototype.$invoker;
+                invoker.invoker = new Invoker(this);
+                Parent = Parent.prototype.$parent;
+                invoker = invoker.invoker;
             }
 
             if(typeof (this._construct) == 'function') {
@@ -177,7 +190,22 @@ const oojs = {
             }
         }
 
+        OOJSClassConstructor.prototype.$invoker = function(instance) {
+            this.instance = instance;
+        };
 
+        var $invoker = OOJSClassConstructor.prototype.$invoker;
+
+        for(index in OOJSClassConstructor.prototype) {
+            if(index != '$invoker' && typeof OOJSClassConstructor.prototype[index] == 'function') {
+                var assign="";
+                assign += "$invoker.prototype." + index + " = function() {";
+                assign += "                    var parentFunction = OOJSClassConstructor.prototype." + index + ";";
+                assign += "                    return parentFunction.apply(this.instance, arguments);";
+                assign += "                }";
+                eval(assign);
+            }
+        }
 
         return OOJSClassConstructor;
     },
