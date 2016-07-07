@@ -110,6 +110,46 @@ describe('oojs', function() {
             assert.equal(true, c instanceof Class1);
         });
 
+        it('should get abstract not implement error.', function () {
+
+            var Class1 = oo.class({
+                public: {
+                    name: "Class 1",
+                    setName: function(name) {
+                        this.name = name;
+                    }
+                },
+                abstract: [
+                    "getName",
+                ]
+            });
+
+
+            var Class2 = oo.class({ extends: Class1,
+                abstract: [
+                    "getYear"
+                ]
+            });
+
+            var Class3 = oo.class({ extends: Class2,
+                public: {
+                    getYear: function() {
+                        return 10;
+                    }
+                }
+            });
+
+            var exc = null;
+            try {
+                var c = new Class3();
+            }
+            catch(e) {
+                exc = e;
+            }
+
+            assert.equal(exc.message, "Abstract method [getName] not implement error.");
+        });
+
         it('should construct by method _constuct().', function () {
 
             var Class1 = oo.class({

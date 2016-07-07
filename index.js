@@ -16,7 +16,8 @@ const oojs = {
             $isAbstractExists,
             abstractLength,
             $abstractLength,
-            $abstract;
+            $abstract,
+            parentAbstract;
 
         // Create new class constructor.
         OOJSClassConstructor = function() {
@@ -34,7 +35,7 @@ const oojs = {
                         (method == $method);
                 }
                 if(!isAbstractImplemented) {
-                    throw "Abstract method [" + $method + "] not implement error.";
+                    throw {message: "Abstract method [" + $method + "] not implement error."};
                 }
             }
 
@@ -98,9 +99,10 @@ const oojs = {
             }
 
             // extend abstract list.
-            $abstractLength = OOJSClassConstructor.prototype.$parent.prototype.$abstract.length;
+            parentAbstract = OOJSClassConstructor.prototype.$parent.prototype.$abstract || [];
+            $abstractLength = parentAbstract.length;
             for($index = 0; $index < $abstractLength; $index++) {
-                method = OOJSClassConstructor.prototype.$parent.prototype.$abstract[$index];
+                method = parentAbstract[$index];
                 OOJSClassConstructor.prototype.$abstract.push(method);
             }
 

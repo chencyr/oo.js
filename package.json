@@ -1,7 +1,7 @@
 {
   "name": "oo.js",
-  "version": "0.0.7",
-  "description": "",
+  "version": "0.0.8",
+  "description": "For nodejs object oriented helper. util.inherits object compatible.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,5 +25,9 @@
   "homepage": "https://github.com/chencyr/oo.js#readme",
   "dependencies": {
     "extend": "^3.0.0"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {}
 }
