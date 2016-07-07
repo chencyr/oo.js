@@ -1,7 +1,7 @@
 var assert  = require('assert');
 var oo      = require('../index');
 
-describe('refactoring', function() {
+describe('class-attributes', function() {
     describe('#class()', function () {
         it('should get parent class/extend method/extend attributes.', function () {
             var Class1 = oo.class({
