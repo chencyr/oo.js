@@ -1,25 +1,3 @@
-//
-//var inheritsParentCaller = function(childClass) {
-//
-//    childClass.prototype._parent = function(methodName) {
-//        var self = this;
-//        this.scopeDeep_ = this.scopeDeep_ || {};
-//        this.scopeDeep_[methodName] = this.scopeDeep_[methodName] || 0;
-//
-//        return function() {
-//            self.scopeDeep_[methodName]++;
-//            var parentClass = childClass.super_;
-//            for(var i = 1; i < self.scopeDeep_[methodName]; i++) {
-//                parentClass = parentClass.super_;
-//            }
-//
-//            var result =  parentClass.prototype[methodName].apply(self, arguments);
-//            self.scopeDeep_[methodName]--;
-//            return result;
-//        }
-//    };
-//};
-
 /**
  * Support a simply way to develop javascript application by Object Oriented Design.
  */
@@ -35,9 +13,6 @@ const oojs = {
             index,
             $index,
             method,
-            Parent,
-            Invoker,
-            invoker,
             $isAbstractExists,
             abstractLength,
             $abstractLength,
@@ -61,17 +36,6 @@ const oojs = {
                 if(!isAbstractImplemented) {
                     throw "Abstract method [" + $method + "] not implement error.";
                 }
-            }
-
-            Parent = this.$parent;
-            invoker = this;
-            var count = 0;
-            while(Parent) {
-                count++;
-                Invoker = Parent.prototype.$invoker;
-                invoker.invoker = new Invoker(this);
-                Parent = Parent.prototype.$parent;
-                invoker = invoker.invoker;
             }
 
             if(typeof (this._construct) == 'function') {
@@ -187,23 +151,6 @@ const oojs = {
             for(index in args.public) {
                 method = args.public[index];
                 OOJSClassConstructor.prototype[index] = method;
-            }
-        }
-
-        OOJSClassConstructor.prototype.$invoker = function(instance) {
-            this.instance = instance;
-        };
-
-        var $invoker = OOJSClassConstructor.prototype.$invoker;
-
-        for(index in OOJSClassConstructor.prototype) {
-            if(index != '$invoker' && typeof OOJSClassConstructor.prototype[index] == 'function') {
-                var assign="";
-                assign += "$invoker.prototype." + index + " = function() {";
-                assign += "                    var parentFunction = OOJSClassConstructor.prototype." + index + ";";
-                assign += "                    return parentFunction.apply(this.instance, arguments);";
-                assign += "                }";
-                eval(assign);
             }
         }
 
