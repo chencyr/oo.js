@@ -1,6 +1,6 @@
 {
   "name": "oo.js",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "For nodejs object oriented helper. util.inherits object compatible.",
   "main": "index.js",
   "scripts": {
