@@ -10,6 +10,7 @@ const oojs = {
     class: function(args) {
 
         var OOJSClassConstructor,
+            extendDeep,
             index,
             $index,
             method,
@@ -87,14 +88,28 @@ const oojs = {
         // Inherit parent's properties.
         if(typeof (args.extends) == 'function') {
 
+            if(args.extends.$extendDeep) {
+                extendDeep = args.extends.$extendDeep;
+            }
+            else {
+                extendDeep = -1;
+            }
+
             if(Object.defineProperty) {
                 Object.defineProperty(OOJSClassConstructor.prototype, '$parent', {
                     enumerable : false,
                     writable: false,
                     value : args.extends
                 });
+
+                Object.defineProperty(OOJSClassConstructor.prototype, '$extendDeep', {
+                    enumerable : false,
+                    writable: false,
+                    value : extendDeep + 1
+                });
             }
             else {
+                OOJSClassConstructor.$extendDeep = extendDeep + 1;
                 OOJSClassConstructor.prototype.$parent = args.extends;
             }
 
@@ -155,6 +170,15 @@ const oojs = {
                 OOJSClassConstructor.prototype[index] = method;
             }
         }
+
+        // Core methods.
+        OOJSClassConstructor.prototype.$eachParent = function(iterator, classConstructor) {
+            classConstructor = classConstructor || this.$parent
+            if(classConstructor.prototype.$parent) {
+                this.$eachParent(iterator, classConstructor.prototype.$parent);
+            }
+            iterator(classConstructor, this);
+        };
 
         return OOJSClassConstructor;
     },

@@ -62,5 +62,42 @@ describe('class-attributes', function() {
 
             assert.equal(JSON.stringify(Class3.prototype.$abstract), JSON.stringify(['method1', 'method2', 'method3', 'method4', 'method5', 'method6']));
         });
+
+        it('should get each parent class.', function () {
+            var Class1 = oo.class({
+                public: {
+                    getValue: function() {
+                        return 9;
+                    }
+                }
+            });
+
+            var Class2 = oo.class({
+                extends: Class1,
+                public: {
+                    getValue: function() {
+                        return 2;
+                    }
+                }
+            });
+
+            var Class3 = oo.class({
+                extends: Class2,
+                public: {
+                    getValue: function() {
+                        var sum = 0;
+                        this.$eachParent(function(parentClass, instance) {
+                            sum += parentClass.prototype.getValue.apply(instance);
+                        });
+                        return sum;
+                    }
+                }
+            });
+
+            var class3 = new Class3();
+            var expected = 11;
+            assert.equal(expected, class3.getValue());
+
+        });
     });
 });
